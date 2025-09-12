@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 class DataInvestigator:
 
@@ -54,23 +53,27 @@ class DataInvestigator:
 # height, weight, lean mass (lm), muscle mass (mm), visceral muscle area (vma), bone mass, visceral fat rating, protein content %
 # body fat % (tfc, tbfr, obesity %)
 
-
 df = pd.read_csv('gallstone.csv')
 di = DataInvestigator(df)
-# print(di.baseline(1))
-# print(di.zeroR(1))
-# print(di.corr())
-# print("Gender vs Height: ", di.corr(2, ))
 
-# print(di.col_nums.items())
 gender = di.get_label_index("Gender")
+
 height = di.get_label_index("Height")
 weight = di.get_label_index("Weight")
 lean_mass = di.get_label_index("Lean Mass (LM) (%)")
 muscle_mass = di.get_label_index("Muscle Mass (MM)")
+visceral_muscle_area = di.get_label_index("Visceral Muscle Area (VMA) (Kg)")
+
+tfc = di.get_label_index("Total Fat Content (TFC)")
+tbfr = di.get_label_index("Total Body Fat Ratio (TBFR) (%)")
+obesity = di.get_label_index("Obesity (%)")
 
 print("Height: ", di.corr(gender, height))
 print("Weight: ", di.corr(gender, weight))
 print("Lean Mass (LM) (%): ", di.corr(gender, lean_mass))
 print("Muscle Mass (MM): ", di.corr(gender, muscle_mass))
+print("Visceral Muscle Area (VMA) (Kg): ", di.corr(gender, visceral_muscle_area))
+print("Total Fat Content (TFC): ", di.corr(gender, tfc))
+print("Total Body Fat Ratio (TBFR) (%): ", di.corr(gender, tbfr))
+print("Obesity (%): ", di.corr(gender, obesity))
 """I believe the gender encoded as 0 is male and 1 is female"""
