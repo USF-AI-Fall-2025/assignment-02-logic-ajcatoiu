@@ -29,12 +29,10 @@ class DataInvestigator:
         Returns:
             int | float: the most frequent value in the column, or None if unavailable
         """
-        try:
-            values = self.get_values(col)
-            most_freq_value = values.value_counts().first_valid_index()
-            return most_freq_value
-        except:
-            return None
+        values = self.get_values(col)
+        if values is not None:
+            return values.value_counts().idxmax()
+        return None
 
     def corr(self, col1: int, col2: int) -> float:
         """
@@ -47,13 +45,11 @@ class DataInvestigator:
         Returns:
             float: the correlation coefficient between the two columns (-1 to 1), or None if computation fails
         """
-        try:
-            col1_label = self.col_nums[col1]
-            col2_label = self.col_nums[col2]
-            correlation = self.df[col1_label].corr(self.df[col2_label])
-            return correlation
-        except:
-            return None
+        col1_label = self.col_nums.get(col1)
+        col2_label = self.col_nums.get(col2)
+        if col1_label and col2_label:
+            return self.df[col1_label].corr(self.df[col2_label])
+        return None
 
     def zeroR(self, col: int) -> int | float:
         """
@@ -66,10 +62,7 @@ class DataInvestigator:
         Returns:
             int | float: the baseline value for the column, or None if unavailable
         """
-        try:
-            return self.baseline(col)
-        except:
-            return None
+        return self.baseline(col)
         
     def get_values(self, col: int) -> pd.Series:
         """
@@ -81,12 +74,10 @@ class DataInvestigator:
         Returns:
             pd.Series: a Series containing the column values, or None if not found
         """
-        try:
-            col_label = self.col_nums[col]
-            col_values = self.df[col_label]
-            return col_values
-        except:
-            return None
+        col_label = self.col_nums.get(col)
+        if col_label is not None:
+            return self.df[col_label]
+        return None
         
     def get_label_index(self, label: str) -> int:
         """
@@ -98,15 +89,17 @@ class DataInvestigator:
         Returns:
             int: the integer index of the column, or None if not found
         """
-        try:
-            for index, trait in self.col_nums.items():
-                if trait == label:
-                    return index
-        except:
-            return None
+        for index, trait in self.col_nums.items():
+            if trait == label:
+                return index
+        return None
 
 df = pd.read_csv('gallstone.csv')
 di = DataInvestigator(df)
+print(di.baseline(1))
+
+"""
+Experimenting with corr()
 
 gender = di.get_label_index("Gender")
 
@@ -128,6 +121,4 @@ print("Visceral Muscle Area (VMA) (Kg): ", di.corr(gender, visceral_muscle_area)
 print("Total Fat Content (TFC): ", di.corr(gender, tfc))
 print("Total Body Fat Ratio (TBFR) (%): ", di.corr(gender, tbfr))
 print("Obesity (%): ", di.corr(gender, obesity))
-
-print(di.baseline(1))
-print(di.zeroR(1))
+"""
